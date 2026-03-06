@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: ms-tecnologia
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bootcamp
+    username: postgres
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics
+  endpoint:
+    health:
+      show-details: always
