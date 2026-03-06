@@ -1,28 +1,54 @@
 spring:
   application:
-    name: ms-tecnologia
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bootcamp
-    username: postgres
-    password: 1234
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    name: franchise-api
 
 server:
-  port: 8081
+  port: 8080
 
+# AWS Configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  dynamodb:
+    # Leave empty in production (ECS task role is used)
+    # Set to http://localhost:8000 for local development with DynamoDB Local
+    endpoint: ${DYNAMODB_ENDPOINT:}
+
+# Actuator
 management:
   endpoints:
     web:
       exposure:
-        include: health, metrics
+        include: health,metrics,info,prometheus
   endpoint:
     health:
       show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      dynamodb:
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 50
+        slow-call-duration-threshold: 2s
+        wait-duration-in-open-state: 10s
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+
+# SpringDoc / Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  info:
+    title: Franchise Management API
+    description: Reactive API for managing a franchise network — franchises, branches, and products.
+    version: 1.0.0
