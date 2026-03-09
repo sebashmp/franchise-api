@@ -25,8 +25,8 @@ public class ProductUseCase implements IProductServicePort {
 
     @Override
     public Mono<Product> addProduct(String branchId, String name, int stock) {
-        return Mono.just(name)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(name)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Product name must not be blank.")))
                 .flatMap(n -> Mono.just(stock)
                         .filter(s -> s >= 0)
@@ -62,8 +62,8 @@ public class ProductUseCase implements IProductServicePort {
 
     @Override
     public Mono<Product> updateProductName(String productId, String newName) {
-        return Mono.just(newName)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(newName)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Product name must not be blank.")))
                 .flatMap(n -> productPersistencePort.findById(productId)
                         .switchIfEmpty(Mono.error(new ProductNotFoundException(productId)))

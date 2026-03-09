@@ -63,6 +63,10 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.mockito:mockito-core'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Lombok in tests
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 dependencyManagement {
@@ -76,8 +80,31 @@ tasks.named('test') {
     finalizedBy jacocoTestReport
 }
 
+def jacocoExclusions = [
+    // Spring wiring — no business logic
+    '**/config/**',
+    '**/FranchiseApplication*',
+    '**/entrypoints/RouterRest*',
+    // Generated code (MapStruct, Lombok models)
+    '**/*MapperImpl*',
+    '**/model/**',
+    // Infrastructure data classes with no logic
+    '**/entity/**',
+    '**/dto/**',
+    '**/entrypoints/util/ErrorDTO*',
+    // Domain rules enforced by compiler, not runtime
+    '**/exceptions/**',
+    // DynamoDB adapters (integration-tested separately)
+    '**/adapters/persistenceadapter/**'
+]
+
 jacocoTestReport {
     dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
     reports {
         xml.required = true
         html.required = true
@@ -85,6 +112,11 @@ jacocoTestReport {
 }
 
 jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
     violationRules {
         rule {
             limit {

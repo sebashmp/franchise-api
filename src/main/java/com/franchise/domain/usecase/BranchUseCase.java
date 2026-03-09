@@ -24,8 +24,8 @@ public class BranchUseCase implements IBranchServicePort {
 
     @Override
     public Mono<Branch> addBranch(String franchiseId, String name) {
-        return Mono.just(name)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(name)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Branch name must not be blank.")))
                 .flatMap(n -> franchisePersistencePort.findById(franchiseId)
                         .switchIfEmpty(Mono.error(new FranchiseNotFoundException(franchiseId)))
@@ -39,8 +39,8 @@ public class BranchUseCase implements IBranchServicePort {
 
     @Override
     public Mono<Branch> updateBranchName(String branchId, String newName) {
-        return Mono.just(newName)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(newName)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Branch name must not be blank.")))
                 .flatMap(n -> branchPersistencePort.findById(branchId)
                         .switchIfEmpty(Mono.error(new BranchNotFoundException(branchId)))

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: franchise-api
+
+# Override DynamoDB endpoint for local DynamoDB
+aws:
+  region: us-east-1
+  dynamodb:
+    endpoint: http://localhost:8000
+
+# Reduce circuit breaker aggressiveness locally
+resilience4j:
+  circuitbreaker:
+    instances:
+      dynamodb:
+        minimum-number-of-calls: 3
+        sliding-window-size: 5
+
+# More verbose logging for local development
+logging:
+  level:
+    com.franchise: DEBUG
+    io.github.resilience4j: DEBUG

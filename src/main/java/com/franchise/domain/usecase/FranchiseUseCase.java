@@ -29,8 +29,8 @@ public class FranchiseUseCase implements IFranchiseServicePort {
 
     @Override
     public Mono<Franchise> createFranchise(String name) {
-        return Mono.just(name)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(name)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Franchise name must not be blank.")))
                 .map(n -> Franchise.builder()
                         .id(UUID.randomUUID().toString())
@@ -41,8 +41,8 @@ public class FranchiseUseCase implements IFranchiseServicePort {
 
     @Override
     public Mono<Franchise> updateFranchiseName(String franchiseId, String newName) {
-        return Mono.just(newName)
-                .filter(n -> n != null && !n.isBlank())
+        return Mono.justOrEmpty(newName)
+                .filter(n -> !n.isBlank())
                 .switchIfEmpty(Mono.error(new InvalidNameException("Franchise name must not be blank.")))
                 .flatMap(n -> franchisePersistencePort.findById(franchiseId)
                         .switchIfEmpty(Mono.error(new FranchiseNotFoundException(franchiseId)))
