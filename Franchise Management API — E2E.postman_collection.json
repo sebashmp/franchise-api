@@ -1,0 +1,1545 @@
+{
+  "info": {
+    "_postman_id": "24574a82-ae59-4082-978a-c0b50caa3ae0",
+    "name": "Franchise Management API — E2E",
+    "description": "Colección E2E completa para franchise-api.\n\nFlujo de ejecución:\n1. Las requests del happy path se ejecutan en orden. Cada test script extrae el ID de la respuesta y lo guarda como variable de colección (franchiseId, branchId1, branchId2, productId1, productId2, productId3) para las siguientes requests.\n2. Al final, la carpeta 'Errores' cubre todos los casos 400 y 404.\n\nVariable requerida: baseUrl (default: http://localhost:8080)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51075832",
+    "_collection_link": "https://go.postman.co/collection/51075832-24574a82-ae59-4082-978a-c0b50caa3ae0?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Franquicia",
+      "item": [
+        {
+          "name": "01 - Crear franquicia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response tiene id y name', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.name).to.eql('Nequi Colombia');",
+                  "    pm.collectionVariables.set('franchiseId', json.id);",
+                  "    console.log('franchiseId guardado:', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nequi Colombia\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "02 - Actualizar nombre de franquicia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Nombre actualizado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(pm.collectionVariables.get('franchiseId'));",
+                  "    pm.expect(json.name).to.eql('Nequi Internacional');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nequi Internacional\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Sucursales",
+      "item": [
+        {
+          "name": "03 - Agregar sucursal 1 (Bogota)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Sucursal creada con franchiseId correcto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.franchiseId).to.eql(pm.collectionVariables.get('franchiseId'));",
+                  "    pm.expect(json.name).to.eql('Sucursal Bogota');",
+                  "    pm.collectionVariables.set('branchId1', json.id);",
+                  "    console.log('branchId1 guardado:', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Bogota\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}/branches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}",
+                "branches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04 - Agregar sucursal 2 (Cali)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Sucursal creada con franchiseId correcto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.franchiseId).to.eql(pm.collectionVariables.get('franchiseId'));",
+                  "    pm.expect(json.name).to.eql('Sucursal Cali');",
+                  "    pm.collectionVariables.set('branchId2', json.id);",
+                  "    console.log('branchId2 guardado:', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Cali\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}/branches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}",
+                "branches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05 - Actualizar nombre sucursal 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Nombre actualizado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(pm.collectionVariables.get('branchId1'));",
+                  "    pm.expect(json.name).to.eql('Sucursal Bogota Norte');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Bogota Norte\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Productos",
+      "item": [
+        {
+          "name": "06 - Agregar producto 1 a sucursal 1 (stock: 150)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Producto creado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.branchId).to.eql(pm.collectionVariables.get('branchId1'));",
+                  "    pm.expect(json.name).to.eql('Producto Credito');",
+                  "    pm.expect(json.stock).to.eql(150);",
+                  "    pm.collectionVariables.set('productId1', json.id);",
+                  "    console.log('productId1 guardado:', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Credito\",\n  \"stock\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "07 - Agregar producto 2 a sucursal 1 (stock: 50)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Producto creado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.branchId).to.eql(pm.collectionVariables.get('branchId1'));",
+                  "    pm.expect(json.name).to.eql('Producto Leasing');",
+                  "    pm.expect(json.stock).to.eql(50);",
+                  "    pm.collectionVariables.set('productId2', json.id);",
+                  "    console.log('productId2 guardado:', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Leasing\",\n  \"stock\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "08 - Agregar producto 3 a sucursal 2 (stock: 200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Producto creado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.be.a('string').and.not.empty;",
+                  "    pm.expect(json.branchId).to.eql(pm.collectionVariables.get('branchId2'));",
+                  "    pm.expect(json.name).to.eql('Producto Cuenta Debito');",
+                  "    pm.expect(json.stock).to.eql(200);",
+                  "    pm.collectionVariables.set('productId3', json.id);",
+                  "    console.log('productId3 guardado:', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Cuenta Debito\",\n  \"stock\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId2}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId2}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "09 - Actualizar stock producto 1 (150 → 300)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Stock actualizado a 300', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(pm.collectionVariables.get('productId1'));",
+                  "    pm.expect(json.stock).to.eql(300);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stock\": 300\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productId1}}/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productId1}}",
+                "stock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10 - Actualizar nombre producto 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Nombre actualizado correctamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(pm.collectionVariables.get('productId3'));",
+                  "    pm.expect(json.name).to.eql('Producto Cuenta Debito Cambiado');",
+                  "    pm.expect(json.stock).to.eql(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Cuenta Debito Cambiado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productId3}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productId3}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11 - Eliminar producto 2 de sucursal 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204 No Content', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test('Body vacío', function () {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products/{{productId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products",
+                "{{productId2}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Reporte Top Stock",
+      "item": [
+        {
+          "name": "12 - Top-stock por sucursal de la franquicia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response es un array con 2 elementos', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array').with.lengthOf(2);",
+                  "});",
+                  "pm.test('Cada elemento tiene branchId, branchName y product', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function(item) {",
+                  "        pm.expect(item).to.have.property('branchId');",
+                  "        pm.expect(item).to.have.property('branchName');",
+                  "        pm.expect(item).to.have.property('product');",
+                  "        pm.expect(item.product).to.have.property('id');",
+                  "        pm.expect(item.product).to.have.property('name');",
+                  "        pm.expect(item.product).to.have.property('stock');",
+                  "    });",
+                  "});",
+                  "pm.test('Producto top de sucursal 1 tiene stock 300 (El de Credito)', function () {",
+                  "    var json = pm.response.json();",
+                  "    var branch1Result = json.find(function(item) {",
+                  "        return item.branchId === pm.collectionVariables.get('branchId1');",
+                  "    });",
+                  "    pm.expect(branch1Result).to.not.be.undefined;",
+                  "    pm.expect(branch1Result.product.stock).to.eql(300);",
+                  "    pm.expect(branch1Result.product.id).to.eql(pm.collectionVariables.get('productId1'));",
+                  "});",
+                  "pm.test('Producto top de sucursal 2 tiene stock 200 (el de Cuenta Debito)', function () {",
+                  "    var json = pm.response.json();",
+                  "    var branch2Result = json.find(function(item) {",
+                  "        return item.branchId === pm.collectionVariables.get('branchId2');",
+                  "    });",
+                  "    pm.expect(branch2Result).to.not.be.undefined;",
+                  "    pm.expect(branch2Result.product.stock).to.eql(200);",
+                  "    pm.expect(branch2Result.product.id).to.eql(pm.collectionVariables.get('productId3'));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}/top-products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}",
+                "top-products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Errores — 400 Bad Request",
+      "item": [
+        {
+          "name": "ERR-01 - Crear franquicia con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "    pm.expect(json.message).to.be.a('string').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-02 - Actualizar nombre franquicia con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"   \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-03 - Agregar sucursal con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/{{franchiseId}}/branches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "{{franchiseId}}",
+                "branches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-04 - Actualizar nombre sucursal con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-05 - Agregar producto con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"stock\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-06 - Agregar producto con stock negativo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_STOCK', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_STOCK');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Invalido\",\n  \"stock\": -1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-07 - Actualizar stock con valor negativo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_STOCK', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_STOCK');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stock\": -5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productId1}}/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productId1}}",
+                "stock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-08 - Actualizar nombre producto con nombre vacío",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('ErrorCode INVALID_NAME', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_NAME');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productId1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productId1}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Errores — 404 Not Found",
+      "item": [
+        {
+          "name": "ERR-09 - Actualizar franquicia inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode FRANCHISE_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('FRANCHISE_NOT_FOUND');",
+                  "    pm.expect(json.message).to.include('00000000-0000-0000-0000-000000000000');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Franquicia Inexistente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-10 - Agregar sucursal a franquicia inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode FRANCHISE_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('FRANCHISE_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Huérfana\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/00000000-0000-0000-0000-000000000000/branches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "00000000-0000-0000-0000-000000000000",
+                "branches"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-11 - Actualizar nombre sucursal inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode BRANCH_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('BRANCH_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sucursal Inexistente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-12 - Agregar producto a sucursal inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode BRANCH_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('BRANCH_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto Huérfano\",\n  \"stock\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/00000000-0000-0000-0000-000000000000/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "00000000-0000-0000-0000-000000000000",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-13 - Actualizar stock de producto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode PRODUCT_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('PRODUCT_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stock\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/00000000-0000-0000-0000-000000000000/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "00000000-0000-0000-0000-000000000000",
+                "stock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-14 - Actualizar nombre de producto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode PRODUCT_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('PRODUCT_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nombre Inexistente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-15 - Eliminar producto inexistente en sucursal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode PRODUCT_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('PRODUCT_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/branches/{{branchId1}}/products/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "branches",
+                "{{branchId1}}",
+                "products",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ERR-16 - Top-stock de franquicia inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('ErrorCode FRANCHISE_NOT_FOUND', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('FRANCHISE_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/franchises/00000000-0000-0000-0000-000000000000/top-products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "franchises",
+                "00000000-0000-0000-0000-000000000000",
+                "top-products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "franchiseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "branchId1",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "branchId2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId1",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId3",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
