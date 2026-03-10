@@ -69,6 +69,7 @@
     <!-- Suppress noisy framework logs -->
     <logger name="io.netty" level="WARN"/>
     <logger name="reactor.netty" level="WARN"/>
+    <logger name="reactor.netty.http.server.AccessLog" level="INFO"/>
     <logger name="software.amazon.awssdk" level="WARN"/>
     <logger name="io.github.resilience4j" level="INFO"/>
 

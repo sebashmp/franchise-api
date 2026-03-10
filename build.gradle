@@ -75,6 +75,10 @@ dependencyManagement {
     }
 }
 
+bootRun {
+    systemProperty 'reactor.netty.http.server.accessLogEnabled', 'true'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
