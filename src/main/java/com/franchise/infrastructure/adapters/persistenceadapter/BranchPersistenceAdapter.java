@@ -8,6 +8,7 @@ import com.franchise.infrastructure.adapters.persistenceadapter.mapper.DynamoDbM
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,12 +29,15 @@ public class BranchPersistenceAdapter implements IBranchPersistencePort {
     private final DynamoDbEnhancedAsyncClient client;
     private final DynamoDbMapper mapper;
 
+    @Value("${aws.dynamodb.tables.branches}")
+    private String tableName;
+
     private DynamoDbAsyncTable<BranchDocument> table;
     private DynamoDbAsyncIndex<BranchDocument> franchiseIdIndex;
 
     @PostConstruct
     void init() {
-        this.table = client.table("branches", TableSchema.fromBean(BranchDocument.class));
+        this.table = client.table(tableName, TableSchema.fromBean(BranchDocument.class));
         this.franchiseIdIndex = table.index("franchiseId-index");
     }
 

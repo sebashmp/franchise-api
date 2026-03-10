@@ -8,6 +8,7 @@ import com.franchise.infrastructure.adapters.persistenceadapter.mapper.DynamoDbM
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,12 +29,15 @@ public class ProductPersistenceAdapter implements IProductPersistencePort {
     private final DynamoDbEnhancedAsyncClient client;
     private final DynamoDbMapper mapper;
 
+    @Value("${aws.dynamodb.tables.products}")
+    private String tableName;
+
     private DynamoDbAsyncTable<ProductDocument> table;
     private DynamoDbAsyncIndex<ProductDocument> branchIdIndex;
 
     @PostConstruct
     void init() {
-        this.table = client.table("products", TableSchema.fromBean(ProductDocument.class));
+        this.table = client.table(tableName, TableSchema.fromBean(ProductDocument.class));
         this.branchIdIndex = table.index("branchId-index");
     }
 

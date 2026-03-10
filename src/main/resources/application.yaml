@@ -12,6 +12,10 @@ aws:
     # Leave empty in production (ECS task role is used)
     # Set to http://localhost:8000 for local development with DynamoDB Local
     endpoint: ${DYNAMODB_ENDPOINT:}
+    tables:
+      franchises: ${DYNAMODB_TABLE_FRANCHISES:franchises}
+      branches: ${DYNAMODB_TABLE_BRANCHES:branches}
+      products: ${DYNAMODB_TABLE_PRODUCTS:products}
 
 # Actuator
 management:

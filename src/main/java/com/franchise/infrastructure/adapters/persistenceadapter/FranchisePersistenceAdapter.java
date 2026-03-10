@@ -8,6 +8,7 @@ import com.franchise.infrastructure.adapters.persistenceadapter.mapper.DynamoDbM
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
@@ -24,11 +25,14 @@ public class FranchisePersistenceAdapter implements IFranchisePersistencePort {
     private final DynamoDbEnhancedAsyncClient client;
     private final DynamoDbMapper mapper;
 
+    @Value("${aws.dynamodb.tables.franchises}")
+    private String tableName;
+
     private DynamoDbAsyncTable<FranchiseDocument> table;
 
     @PostConstruct
     void init() {
-        this.table = client.table("franchises", TableSchema.fromBean(FranchiseDocument.class));
+        this.table = client.table(tableName, TableSchema.fromBean(FranchiseDocument.class));
     }
 
     @Override
