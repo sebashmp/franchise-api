@@ -1,76 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
-    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="franchise-api"/>
-
-    <!-- ===== JSON Appender (used in all environments) ===== -->
-    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <providers>
-                <timestamp>
-                    <fieldName>timestamp</fieldName>
-                    <timeZone>UTC</timeZone>
-                </timestamp>
-                <logLevel>
-                    <fieldName>level</fieldName>
-                </logLevel>
-                <loggerName>
-                    <fieldName>logger</fieldName>
-                    <shortenedLoggerNameLength>36</shortenedLoggerNameLength>
-                </loggerName>
-                <threadName>
-                    <fieldName>thread</fieldName>
-                </threadName>
-                <mdc/>
-                <message/>
-                <stackTrace>
-                    <fieldName>stackTrace</fieldName>
-                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                        <maxDepthPerCause>8</maxDepthPerCause>
-                        <shortenedClassNameLength>36</shortenedClassNameLength>
-                        <exclude>^sun\.</exclude>
-                        <exclude>^java\.lang\.reflect\.</exclude>
-                        <rootCauseFirst>true</rootCauseFirst>
-                    </throwableConverter>
-                </stackTrace>
-            </providers>
-            <customFields>{"app":"${appName}"}</customFields>
-        </encoder>
-    </appender>
-
-    <!-- ===== Human-readable appender for local development ===== -->
+    <!-- Para local -->
     <springProfile name="local,default">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%thread] [traceId=%X{traceId:-} spanId=%X{spanId:-}] %cyan(%logger{36}) - %msg%n</pattern>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{traceId:-},${spanId:-}] %-5level %logger{36} - %msg%n</pattern>
             </encoder>
         </appender>
-
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
-
-        <logger name="com.franchise" level="DEBUG" additivity="false">
-            <appender-ref ref="CONSOLE"/>
-        </logger>
     </springProfile>
 
-    <!-- ===== JSON structured logging for non-local environments ===== -->
-    <springProfile name="!local &amp;&amp; !default">
+    <!-- desplegado en JSON para CloudWatch -->
+    <springProfile name="dev,staging,prod">
+        <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
         <root level="INFO">
             <appender-ref ref="JSON_CONSOLE"/>
         </root>
-
-        <logger name="com.franchise" level="INFO" additivity="false">
-            <appender-ref ref="JSON_CONSOLE"/>
-        </logger>
     </springProfile>
 
-    <!-- Suppress noisy framework logs -->
-    <logger name="io.netty" level="WARN"/>
-    <logger name="reactor.netty" level="WARN"/>
-    <logger name="reactor.netty.http.server.AccessLog" level="INFO"/>
+    <!-- Reduce ruido -->
     <logger name="software.amazon.awssdk" level="WARN"/>
-    <logger name="io.github.resilience4j" level="INFO"/>
-
+    <logger name="io.netty" level="WARN"/>
 </configuration>
